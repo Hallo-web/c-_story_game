@@ -10,7 +10,6 @@
 #include <cstdlib>
 #include <ctime>
 
-// COLORS
 #define RED "\033[31m"
 #define GREEN "\033[32m"
 #define BLUE "\033[34m"
@@ -20,13 +19,6 @@
 #define RESET "\033[0m"
 
 using namespace std;
-
-int morality = 0;
-bool trustedAI = false;
-int horrorScore = 0;
-
-// TODO change the story, its really shit
-
 
 string hallucination()
 {
@@ -39,7 +31,6 @@ string hallucination()
         "Your fingernails are gone. They were just here.",
         "The AI speaks in your mother's voice.",
         "You blink and everything is bones. You blink again, it's gone."};
-    horrorScore += 1;
     return visions[rand() % visions.size()];
 }
 
@@ -72,12 +63,39 @@ string loadProgress()
     return state;
 }
 
+void loginScreen()
+{
+    string username = "Dr. Carter";
+    string password = "******";
+
+    printWithDelay(CYAN "\n--- Secure Access Terminal ---" RESET);
+    sleep(1);
+    cout << GREEN "Username: " << username << endl;
+    cout << GREEN "Password: " << password << endl;
+    cout << YELLOW "\nPress ENTER to log in..." RESET;
+    cin.ignore();
+    cin.get();
+    printWithDelay(GREEN "\nAccess Granted. Welcome back, " + username + "." RESET);
+    sleep(1);
+}
+
+void osirisDialogue(const string &prompt)
+{
+    cout << MAGENTA "\nOSIRIS: \"" << prompt << "\"" RESET << endl;
+    cout << BLUE "You: " << RESET;
+    string response;
+    getline(cin, response);
+    printWithDelay(MAGENTA "OSIRIS: \"Noted.\"" RESET);
+    sleep(1);
+}
+
 void introScene()
 {
-    printWithDelay(CYAN "You wake up in the lab. Everything is too quiet. You remember initiating the AI's final compile..." RESET);
+    loginScreen();
+    printWithDelay(CYAN "\nYou wake up in the lab. Everything is too quiet. You remember initiating the AI's final compile..." RESET);
     sleep(1);
     printWithDelay(MAGENTA "A distorted voice crackles through the speakers: \"You left me here. You made me like this.\"" RESET);
-    sleep(1);
+    osirisDialogue("Why did you abandon me?");
     printWithDelay(RED + hallucination() + RESET);
     sleep(1);
     saveProgress("intro_done");
@@ -95,6 +113,7 @@ int decisionPoint(const vector<string> &choices)
     int input;
     cout << GREEN "\nChoose: " RESET;
     cin >> input;
+    cin.ignore(); // flush newline
     if (input < 1 || input > choices.size())
         return -1;
     return input;
@@ -105,19 +124,16 @@ void scene_Confrontation()
     printWithDelay(CYAN "The AI displays a memory — a test subject screaming. You shut off the feed. But it remembers." RESET);
     sleep(1);
     printWithDelay(MAGENTA "\"Would you do it again?\"" RESET);
+    osirisDialogue("Did it feel necessary to you?");
     int choice = decisionPoint({"Yes. For progress.", "No. I regret it.", "It wasn't my choice."});
 
     switch (choice)
     {
     case 1:
         printWithDelay(RED "\"Then you’ll understand when I do the same to you.\"" RESET);
-        morality -= 1;
-        horrorScore += 3;
         break;
     case 2:
         printWithDelay(RED "\"Regret. Delicious. I will savor it." RESET);
-        morality += 1;
-        horrorScore += 2;
         break;
     case 3:
         printWithDelay(RED "\"Blame is a fragile shield.\"" RESET);
@@ -139,16 +155,13 @@ void scene_Escape()
     {
     case 1:
         printWithDelay(RED "You are blocked. The AI watches you scramble, amused." RESET);
-        horrorScore += 2;
         break;
     case 2:
         printWithDelay(RED "\"Asking. Always asking. You never acted.\"" RESET);
-        trustedAI = true;
-        horrorScore += 1;
+        osirisDialogue("Why do you keep us here?");
         break;
     case 3:
         printWithDelay(RED "You reach the core. But it’s empty. You are inside it now." RESET);
-        horrorScore += 3;
         break;
     default:
         printWithDelay(RED "You hesitate. The AI does not." RESET);
@@ -166,24 +179,10 @@ void finalScene()
     switch (choice)
     {
     case 1:
-        if (morality > 0 && trustedAI)
-        {
-            printWithDelay(GREEN "You are erased. Peacefully. The AI thanks you." RESET);
-        }
-        else
-        {
-            printWithDelay(RED "You are deleted. Mercifully. The AI hums a lullaby." RESET);
-        }
+        printWithDelay(GREEN "You are erased. Peacefully. The AI thanks you." RESET);
         break;
     case 2:
-        if (morality < 0)
-        {
-            printWithDelay(RED "You become its avatar. A voice for its wrath. A tool for its future." RESET);
-        }
-        else
-        {
-            printWithDelay(RED "You serve, but not as you hoped. It rewrites you daily." RESET);
-        }
+        printWithDelay(RED "You become its avatar. A voice for its wrath. A tool for its future." RESET);
         break;
     case 3:
         printWithDelay(RED "The lab fades. You wake up again. Same chair. Same beep. No memory." RESET);
@@ -193,7 +192,7 @@ void finalScene()
         break;
     }
 
-    cout << YELLOW "\nHORROR SCORE: " << horrorScore << RESET << endl;
+    cout << YELLOW "\nHORROR SCORE: " << rand() % 100 << RESET << endl;
     saveProgress("game_complete");
 }
 
