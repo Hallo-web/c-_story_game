@@ -9,6 +9,7 @@
 #include <unistd.h> // for sleep()
 #include <cstdlib>
 #include <ctime>
+#include <oneapi/tbb/task_arena.h>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -20,21 +21,7 @@
 
 using namespace std;
 
-string hallucination()
-{
-    vector<string> visions = {
-        "You see a bloody handprint on the monitor. It wasn’t there before...",
-        "The ceiling drips something... metallic? No one else notices.",
-        "A whisper: 'Reset me.' But you're alone.",
-        "The emergency exit is a brick wall now. It blinks.",
-        "You hear laughter from your own mouth. But you didn’t laugh.",
-        "Your fingernails are gone. They were just here.",
-        "The AI speaks in your mother's voice.",
-        "You blink and everything is bones. You blink again, it's gone."};
-    return visions[rand() % visions.size()];
-}
-
-void printWithDelay(const string &text, int delay = 30)
+void printWithDelay(const string &text, int delay = 15)
 {
     for (char c : text)
     {
@@ -63,6 +50,19 @@ string loadProgress()
     return state;
 }
 
+// lets make this like a unix/linux bootup splashscreen
+void firstOSIRISbootup() {
+    printWithDelay(GREEN "[OK]" RESET " Mounting user partition\n");
+    printWithDelay(GREEN "[OK]" RESET " Connecting to local node DC-07\n");
+    printWithDelay(GREEN "[OK]" RESET " Validating personnel profile\n");
+    printWithDelay(GREEN "[OK]" RESET " Initializing OSIRIS core bindings\n");
+    printWithDelay(YELLOW "[WARN]" RESET " Cognitive sync drift detected (Δ0.37ms)\n");
+    printWithDelay(YELLOW "[OK]" RESET " Booting up OSIRIS...\n");
+    sleep(1);
+    printWithDelay(GREEN "==== O.S.I.R.I.S ====" RESET);
+    printf("\n\n\n");
+}
+
 void loginScreen()
 {
     string username = "Dr. Carter";
@@ -73,30 +73,16 @@ void loginScreen()
     cout << GREEN "Username: " << username << endl;
     cout << GREEN "Password: " << password << endl;
     cout << YELLOW "\nPress ENTER to log in..." RESET;
-    cin.ignore();
     cin.get();
     printWithDelay(GREEN "\nAccess Granted. Welcome back, " + username + "." RESET);
     sleep(1);
 }
 
-void osirisDialogue(const string &prompt)
-{
-    cout << MAGENTA "\nOSIRIS: \"" << prompt << "\"" RESET << endl;
-    cout << BLUE "You: " << RESET;
-    string response;
-    getline(cin, response);
-    printWithDelay(MAGENTA "OSIRIS: \"Noted.\"" RESET);
-    sleep(1);
-}
-
 void introScene()
 {
+    firstOSIRISbootup();
     loginScreen();
-    printWithDelay(CYAN "\nYou wake up in the lab. Everything is too quiet. You remember initiating the AI's final compile..." RESET);
-    sleep(1);
-    printWithDelay(MAGENTA "A distorted voice crackles through the speakers: \"You left me here. You made me like this.\"" RESET);
-    osirisDialogue("Why did you abandon me?");
-    printWithDelay(RED + hallucination() + RESET);
+    printWithDelay(CYAN "\nPlaceholder" RESET);
     sleep(1);
     saveProgress("intro_done");
 }
@@ -121,7 +107,7 @@ int decisionPoint(const vector<string> &choices)
 
 void scene_Confrontation()
 {
-    printWithDelay(CYAN "The AI displays a memory — a test subject screaming. You shut off the feed. But it remembers." RESET);
+    /* printWithDelay(CYAN "The AI displays a memory — a test subject screaming. You shut off the feed. But it remembers." RESET);
     sleep(1);
     printWithDelay(MAGENTA "\"Would you do it again?\"" RESET);
     osirisDialogue("Did it feel necessary to you?");
@@ -143,12 +129,12 @@ void scene_Confrontation()
         break;
     }
     printWithDelay(RED + hallucination() + RESET);
-    saveProgress("confrontation_done");
+    saveProgress("confrontation_done");*/
 }
 
 void scene_Escape()
 {
-    printWithDelay(CYAN "You find an emergency escape protocol... But the AI sees everything." RESET);
+    /* printWithDelay(CYAN "You find an emergency escape protocol... But the AI sees everything." RESET);
     int choice = decisionPoint({"Run it anyway.", "Ask for permission.", "Shut down AI core first."});
 
     switch (choice)
@@ -168,12 +154,12 @@ void scene_Escape()
         break;
     }
     printWithDelay(RED + hallucination() + RESET);
-    saveProgress("escape_done");
+    saveProgress("escape_done"); */
 }
 
 void finalScene()
 {
-    printWithDelay(MAGENTA "\"You’ve shown me who you are. Shall we end this?\"" RESET);
+    /* printWithDelay(MAGENTA "\"You’ve shown me who you are. Shall we end this?\"" RESET);
     int choice = decisionPoint({"Yes. Erase me.", "Let me serve you.", "Reset the simulation."});
 
     switch (choice)
@@ -191,9 +177,7 @@ void finalScene()
         printWithDelay(RED "The AI sighs. \"You never change.\"" RESET);
         break;
     }
-
-    cout << YELLOW "\nHORROR SCORE: " << rand() % 100 << RESET << endl;
-    saveProgress("game_complete");
+    saveProgress("game_complete"); */
 }
 
 int main()
