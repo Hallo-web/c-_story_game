@@ -21,7 +21,7 @@
 
 using namespace std;
 
-void printWithDelay(const string &text, int delay = 15)
+void printWithDelay(const string &text, int delay = 30)
 {
     for (char c : text)
     {
@@ -52,15 +52,17 @@ string loadProgress()
 
 // lets make this like a unix/linux bootup splashscreen
 void firstOSIRISbootup() {
-    printWithDelay(GREEN "[OK]" RESET " Mounting user partition\n");
-    printWithDelay(GREEN "[OK]" RESET " Connecting to local node DC-07\n");
-    printWithDelay(GREEN "[OK]" RESET " Validating personnel profile\n");
-    printWithDelay(GREEN "[OK]" RESET " Initializing OSIRIS core bindings\n");
-    printWithDelay(YELLOW "[WARN]" RESET " Cognitive sync drift detected (Δ0.37ms)\n");
-    printWithDelay(YELLOW "[OK]" RESET " Booting up OSIRIS...\n");
+    printWithDelay(GREEN "[OK]" RESET " Mounting user partition");
+    printWithDelay(GREEN "[OK]" RESET " Connecting to local node DC-07");
+    printWithDelay(GREEN "[OK]" RESET " Validating personnel profile");
+    printWithDelay(GREEN "[OK]" RESET " Initializing OSIRIS core bindings");
     sleep(1);
+    printWithDelay(RED "[WARNING]" RESET " Cognitive sync drift detected (Δ0.37ms)");
+    sleep(1);
+    printWithDelay(GREEN "[OK]" RESET " Booting up OSIRIS...\n");
+    sleep(2);
     printWithDelay(GREEN "==== O.S.I.R.I.S ====" RESET);
-    printf("\n\n\n");
+    printf("\n\n");
 }
 
 void loginScreen()
@@ -100,8 +102,8 @@ int decisionPoint(const vector<string> &choices)
     cout << GREEN "\nChoose: " RESET;
     cin >> input;
     cin.ignore(); // flush newline
-    if (input < 1 || input > choices.size())
-        return -1;
+//    if (input < 1 || input > choices.size())
+  //      return -1;
     return input;
 }
 
@@ -182,11 +184,13 @@ void finalScene()
 
 int main()
 {
+    introScene();
     srand(time(0));
     string progress = loadProgress();
 
     if (progress == "intro_done")
     {
+
         scene_Confrontation();
         scene_Escape();
         finalScene();
