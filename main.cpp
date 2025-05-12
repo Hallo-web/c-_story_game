@@ -80,10 +80,31 @@ void loginScreen()
     sleep(1);
 }
 
-void introScene()
-{
+void OsirisOptions() {
+    int OsirisOption = 0;
+    printWithDelay(GREEN "Welcome to O.S.I.R.I.S." RESET "\nWhat would you like to do?\nChoose:\n>> ");
+    cin >> OsirisOption;
+    if (OsirisOption == 1) {
+        PlayerStats();
+    }else if (OsirisOption == 2) {
+        SystemCheck();
+    } else if (OsirisOption == 3) {
+        Logs();
+    }else if (OsirisOption == 4) {
+        Messages();
+    }else if (OsirisOption == 5) {
+        People();
+    }else if (OsirisOption == 6) {
+        resume();
+    }else {
+        printWithDelay(RED"Invalid Option! Try again!" RESET);
+    }
+}
+
+void introScene() {
     firstOSIRISbootup();
     loginScreen();
+    OsirisOptions();
     printWithDelay(CYAN "\nPlaceholder" RESET);
     sleep(1);
     saveProgress("intro_done");
